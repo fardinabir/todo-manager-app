@@ -314,7 +314,7 @@ func TestTodoHandler_Find(t *testing.T) {
 			createBody: `{"task":"Found Task"}`,
 			want: want{
 				StatusCode: http.StatusOK,
-				Response:   []byte(`{"data":{"Task":"Found Task","Status":"created"}}`),
+				Response:   []byte(`{"data":{"Task":"Found Task","Status":"created", "Priority":0}}`),
 			},
 		},
 		{
