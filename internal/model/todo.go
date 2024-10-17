@@ -22,12 +22,11 @@ func NewTodo(task string, priority int) *Todo {
 }
 
 // NewUpdateTodo returns a new instance of the todo model for updating.
-func NewUpdateTodo(id, priority int, task string, status Status) *Todo {
+func NewUpdateTodo(id int, task string, status Status) *Todo {
 	return &Todo{
-		ID:       id,
-		Task:     task,
-		Status:   status,
-		Priority: priority,
+		ID:     id,
+		Task:   task,
+		Status: status,
 	}
 }
 

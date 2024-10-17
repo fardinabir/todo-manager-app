@@ -67,9 +67,8 @@ type UpdateRequest struct {
 
 // UpdateRequestBody is the request body for updating a todo
 type UpdateRequestBody struct {
-	Task     string       `json:"task,omitempty"`
-	Status   model.Status `json:"status,omitempty"`
-	Priority int          `json:"priority,omitempty"`
+	Task   string       `json:"task,omitempty"`
+	Status model.Status `json:"status,omitempty"`
 }
 
 // UpdateRequestPath is the request parameter for updating a todo
@@ -94,7 +93,7 @@ func (t *todoHandler) Update(c echo.Context) error {
 			ResponseError{Errors: []Error{{Code: errors.CodeBadRequest, Message: err.Error()}}})
 	}
 
-	todo, err := t.service.Update(req.ID, req.Priority, req.Task, req.Status)
+	todo, err := t.service.Update(req.ID, req.Task, req.Status)
 	if err != nil {
 		if err == model.ErrNotFound {
 			return c.JSON(http.StatusNotFound,
