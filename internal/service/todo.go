@@ -2,9 +2,10 @@
 package service
 
 import (
+	"net/url"
+
 	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 	"github.com/zuu-development/fullstack-examination-2024/internal/repository"
-	"net/url"
 )
 
 // Todo is the service for the todo endpoint.
