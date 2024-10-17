@@ -6,11 +6,27 @@
       <input v-model="newTask" placeholder="新しいタスクを入力" @keyup.enter="addTodo">
       <button @click="addTodo">追加</button>
     </div>
+
+    <!-- Query Input Section -->
+    <div class="query-section">
+      <input
+          v-model="query.task"
+          placeholder="Filter by Task Name"
+          @keyup.enter="fetchTodos"
+      >
+      <select v-model="query.status">
+        <option value="">All Statuses</option>
+        <option value="created">Created</option>
+        <option value="done">Done</option>
+      </select>
+      <button @click="fetchTodos">Search</button>
+    </div>
+
     <div v-if="todos.length > 0">
       <div v-for="todo in todos" :key="todo.ID" class="todo-item">
         <input
-v-if="todo.isEditing" v-model="todo.Task" class="edit-input" @blur="editTodo(todo)"
-          @keyup.enter="editTodo(todo)">
+            v-if="todo.isEditing" v-model="todo.Task" class="edit-input" @blur="editTodo(todo)"
+            @keyup.enter="editTodo(todo)">
         <span v-else :class="{ 'done-task': todo.Status === 'done' }" @click="enableEdit(todo)">{{ todo.Task
           }}</span>
         <div class="buttons">
@@ -33,6 +49,10 @@ export default {
     return {
       newTask: '',
       todos: [],
+      query: {
+        task: '',
+        status: '',
+      },
       statusMessage: '',
     };
   },
@@ -41,16 +61,29 @@ export default {
   },
   methods: {
     async fetchTodos() {
+      const params = new URLSearchParams();
+      if (this.query.task) params.append('task', this.query.task);
+      if (this.query.status) params.append('status', this.query.status);
+
+      const queryString = params.toString() ? `?${params.toString()}` : '';
+
+      this.statusMessage = '';
+
       try {
-        const response = await fetch(`/api/v1/todos`, {
+        const response = await fetch(`/api/v1/todos${queryString}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
         if (!response.ok) throw new Error(`Failed to get todo list. statusCode: ${response.status}`);
         response.json().then(data => {
           this.todos = data.data;
+          this.statusMessage = `${this.todos.length} task(s) found.`;
         });
       } catch (error) {
-        console.error(error);
-        this.statusMessage = 'タスクの取得に失敗しました';
+        console.error('Error fetching todos:', error);
+        this.statusMessage = 'Failed to fetch todos.';
       }
     },
     async addTodo() {
@@ -149,6 +182,33 @@ export default {
 </script>
 
 <style scoped>
+.query-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.query-section button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.query-section button:hover {
+  background-color: #555;
+}
+
+.query-section input,
+.query-section select {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
 .todo-main {
   max-width: 400px;
   margin: 20px auto;
