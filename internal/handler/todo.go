@@ -171,8 +171,10 @@ func (t *todoHandler) Find(c echo.Context) error {
 
 // @Summary	Find all todos
 // @Tags		todos
-// @Success	200	{object}	ResponseData{Data=[]model.Todo}
-// @Failure	500	{object}	ResponseError
+// @Param		task		query	string	false	"Filter by task name"
+// @Param		status	query	string	false	"Filter by task status"
+// @Success	200		{object}	ResponseData{Data=[]model.Todo}
+// @Failure	500		{object}	ResponseError
 // @Router		/todos [get]
 func (t *todoHandler) FindAll(c echo.Context) error {
 	params := c.QueryParams()
