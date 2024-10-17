@@ -7,6 +7,9 @@
         "description": "This is a server for fullstack-examination-2024.",
         "title": "fullstack-examination-2024 API",
         "contact": {},
+        "license": {
+            "name": "Apache 2.0"
+        },
         "version": "0.0.1"
     },
     "host": "localhost:8080",
@@ -49,6 +52,20 @@
                     "todos"
                 ],
                 "summary": "Find all todos",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by task name",
+                        "name": "task",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by task status",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -135,7 +152,7 @@
                 }
             }
         },
-        "/todos/:id": {
+        "/todos/{id}": {
             "get": {
                 "tags": [
                     "todos"
@@ -295,6 +312,9 @@
                 "task"
             ],
             "properties": {
+                "priority": {
+                    "type": "integer"
+                },
                 "task": {
                     "type": "string"
                 }
@@ -362,6 +382,9 @@
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "priority": {
                     "type": "integer"
                 },
                 "status": {

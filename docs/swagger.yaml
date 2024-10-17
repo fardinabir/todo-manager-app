@@ -2,6 +2,8 @@ basePath: /api/v1
 definitions:
   handler.CreateRequest:
     properties:
+      priority:
+        type: integer
       task:
         type: string
     required:
@@ -50,6 +52,8 @@ definitions:
         type: string
       id:
         type: integer
+      priority:
+        type: integer
       status:
         $ref: '#/definitions/model.Status'
       task:
@@ -61,6 +65,8 @@ host: localhost:8080
 info:
   contact: {}
   description: This is a server for fullstack-examination-2024.
+  license:
+    name: Apache 2.0
   title: fullstack-examination-2024 API
   version: 0.0.1
 paths:
@@ -83,6 +89,15 @@ paths:
       - health
   /todos:
     get:
+      parameters:
+      - description: Filter by task name
+        in: query
+        name: task
+        type: string
+      - description: Filter by task status
+        in: query
+        name: status
+        type: string
       responses:
         "200":
           description: OK
@@ -135,7 +150,7 @@ paths:
       summary: Create a new todo
       tags:
       - todos
-  /todos/:id:
+  /todos/{id}:
     delete:
       parameters:
       - in: path

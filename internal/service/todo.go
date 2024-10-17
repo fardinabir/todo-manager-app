@@ -75,10 +75,10 @@ func (t *todo) Find(id int) (*model.Todo, error) {
 func (t *todo) FindAll(qry url.Values) ([]*model.Todo, error) {
 	processedQry := map[string]interface{}{}
 	if val, ok := qry["task"]; ok {
-		processedQry["task"] = val
+		processedQry["task"] = val[0]
 	}
 	if val, ok := qry["status"]; ok {
-		processedQry["status"] = val
+		processedQry["status"] = val[0]
 	}
 	todo, err := t.todoRepository.FindAll(processedQry)
 	if err != nil {

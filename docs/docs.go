@@ -10,6 +10,9 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {},
+        "license": {
+            "name": "Apache 2.0"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -52,6 +55,20 @@ const docTemplate = `{
                     "todos"
                 ],
                 "summary": "Find all todos",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by task name",
+                        "name": "task",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by task status",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -138,7 +155,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/todos/:id": {
+        "/todos/{id}": {
             "get": {
                 "tags": [
                     "todos"
@@ -298,6 +315,9 @@ const docTemplate = `{
                 "task"
             ],
             "properties": {
+                "priority": {
+                    "type": "integer"
+                },
                 "task": {
                     "type": "string"
                 }
@@ -365,6 +385,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "priority": {
                     "type": "integer"
                 },
                 "status": {
