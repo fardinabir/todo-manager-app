@@ -30,7 +30,8 @@ func NewTodo(s service.Todo) TodoHandler {
 
 // CreateRequest is the request parameter for creating a new todo
 type CreateRequest struct {
-	Task string `json:"task" validate:"required"`
+	Task     string `json:"task" validate:"required"`
+	Priority int    `json:"priority"`
 }
 
 // @Summary	Create a new todo
@@ -49,7 +50,7 @@ func (t *todoHandler) Create(c echo.Context) error {
 			ResponseError{Errors: []Error{{Code: errors.CodeBadRequest, Message: err.Error()}}})
 	}
 
-	todo, err := t.service.Create(req.Task)
+	todo, err := t.service.Create(req.Task, req.Priority)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
 			ResponseError{Errors: []Error{{Code: errors.CodeInternalServerError, Message: err.Error()}}})
@@ -84,7 +85,7 @@ type UpdateRequestPath struct {
 // @Success	201		{object}	ResponseData{Data=model.Todo}
 // @Failure	400		{object}	ResponseError
 // @Failure	500		{object}	ResponseError
-// @Router		/todos/:id [put]
+// @Router		/todos/{id} [put]
 func (t *todoHandler) Update(c echo.Context) error {
 	var req UpdateRequest
 	if err := t.MustBind(c, &req); err != nil {
@@ -117,7 +118,7 @@ type DeleteRequest struct {
 // @Failure	400	{object}	ResponseError
 // @Failure	404	{object}	ResponseError
 // @Failure	500	{object}	ResponseError
-// @Router		/todos/:id [delete]
+// @Router		/todos/{id} [delete]
 func (t *todoHandler) Delete(c echo.Context) error {
 	var req DeleteRequest
 	if err := t.MustBind(c, &req); err != nil {
@@ -148,7 +149,7 @@ type FindRequest struct {
 // @Failure	400		{object}	ResponseError
 // @Failure	404		{object}	ResponseError
 // @Failure	500		{object}	ResponseError
-// @Router		/todos/:id [get]
+// @Router		/todos/{id} [get]
 func (t *todoHandler) Find(c echo.Context) error {
 	var req FindRequest
 	if err := t.MustBind(c, &req); err != nil {

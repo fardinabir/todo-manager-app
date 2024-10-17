@@ -1,10 +1,16 @@
 <template>
   <div class="todo-main">
-    <h1>TODOリスト</h1>
+    <h1>TODO List | TODO リスト</h1>
     <div v-if="statusMessage" class="status-message">{{ statusMessage }}</div>
     <div class="input-group">
-      <input v-model="newTask" placeholder="新しいタスクを入力" @keyup.enter="addTodo">
-      <button @click="addTodo">追加</button>
+      <input v-model="newTask.task" placeholder="新しいタスクを入力 | Enter a new Task " @keyup.enter="addTodo">
+      <select v-model="newTask.priority">
+        <option value=0 disabled selected hidden>Select Priority</option>
+        <option value=3>High</option>
+        <option value=2>Medium</option>
+        <option value=1>Low</option>
+      </select>
+      <button @click="addTodo"> 追加 </button>
     </div>
 
     <!-- Query Input Section -->
@@ -38,7 +44,7 @@
       </div>
     </div>
     <div v-else>
-      <p>タスクがありません。</p>
+      <p>タスクがありません。| There are no tasks.</p>
     </div>
   </div>
 </template>
@@ -47,7 +53,10 @@
 export default {
   data() {
     return {
-      newTask: '',
+      newTask: {
+        task: '',
+        priority: 0,
+      },
       todos: [],
       query: {
         task: '',
@@ -87,7 +96,7 @@ export default {
       }
     },
     async addTodo() {
-      if (this.newTask.trim() === '') return;
+      if (this.newTask.task.trim() === '') return;
 
       try {
         const response = await fetch('/api/v1/todos', {
@@ -96,7 +105,8 @@ export default {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            task: this.newTask,
+            task: this.newTask.task,
+            priority: parseInt(this.newTask.priority, 10),
             Status: 'created'
           })
         });
@@ -105,12 +115,16 @@ export default {
 
         response.json().then(data => {
           this.todos.push(data.data);
-          this.newTask = '';
-          this.statusMessage = 'タスクが追加されました';
+          this.newTask = {
+            task: '',
+            priority: parseInt(this.newTask.priority, 10)
+          };
+          this.statusMessage = 'タスクが追加されました | TODO added';
+          this.fetchTodos();
         });
       } catch (error) {
         console.error('Error creating todo:', error);
-        this.statusMessage = 'タスクの作成に失敗しました';
+        this.statusMessage = 'タスクの作成に失敗しました | Failed To create TODO.';
       }
     },
     enableEdit(todo) {
@@ -132,10 +146,10 @@ export default {
 
         if (!response.ok) throw new Error(`Failed to edit todo. statusCode: ${response.status}`);
 
-        this.statusMessage = 'タスクが編集されました';
+        this.statusMessage = 'タスクが編集されました | The task has been edited ' ;
       } catch (error) {
         console.error('Error editing todo:', error);
-        this.statusMessage = 'タスクの編集に失敗しました';
+        this.statusMessage = 'タスクの編集に失敗しました | Failed to edit task';
       }
     },
     async updateStatus(todo) {
@@ -153,10 +167,10 @@ export default {
         if (!response.ok) throw new Error(`Failed to update todo Status. statusCode: ${response.status}`);
 
         todo.Status = todo.Status === 'done' ? 'created' : 'done';
-        this.statusMessage = 'タスクのステータスが変更されました';
+        this.statusMessage = 'タスクのステータスが変更されました | The status of the task has changed';
       } catch (error) {
         console.error('Error updating todo Status:', error);
-        this.statusMessage = 'ステータスの更新に失敗しました';
+        this.statusMessage = 'ステータスの更新に失敗しました | Failed to update status';
       }
     },
     async deleteTodo(id) {
@@ -171,10 +185,10 @@ export default {
         if (!response.ok) throw new Error(`Failed to update todo Status. statusCode: ${response.status}`);
 
         this.todos = this.todos.filter(todo => todo.ID !== id);
-        this.statusMessage = 'タスクが削除されました';
+        this.statusMessage = 'タスクが削除されました | The task has been deleted';
       } catch (error) {
         console.error('Error deleting todo:', error);
-        this.statusMessage = 'タスクの削除に失敗しました';
+        this.statusMessage = 'タスクの削除に失敗しました | Failed to delete task ';
       }
     }
   }
@@ -223,7 +237,7 @@ export default {
   margin-bottom: 20px;
 }
 
-input {
+input, select {
   flex: 1;
   padding: 10px;
   border: 1px solid #ddd;
