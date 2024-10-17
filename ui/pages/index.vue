@@ -20,7 +20,7 @@
           placeholder="Filter by Task Name"
           @keyup.enter="fetchTodos"
       >
-      <select v-model="query.status">
+      <select v-model="query.status" @change="fetchTodos">
         <option value="">All Statuses</option>
         <option value="created">Created</option>
         <option value="done">Done</option>
