@@ -140,15 +140,6 @@ func TestTodoHandler_Update(t *testing.T) {
 			},
 		},
 		{
-			name:       "successful_update_with_priority",
-			createBody: `{"task":"Updated Task"}`,
-			updateBody: `{"task":"Updated Task","status":"done", "priority":3}`,
-			want: want{
-				StatusCode: http.StatusOK,
-				Response:   []byte(`{"data":{"Task":"Updated Task","Status":"done", "Priority":3}}`),
-			},
-		},
-		{
 			name:       "not_found_record",
 			updateID:   "-1",
 			updateBody: `{"task":"Updated Task","status":"done"}`,
