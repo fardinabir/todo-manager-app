@@ -174,7 +174,8 @@ func (t *todoHandler) Find(c echo.Context) error {
 // @Failure	500	{object}	ResponseError
 // @Router		/todos [get]
 func (t *todoHandler) FindAll(c echo.Context) error {
-	res, err := t.service.FindAll()
+	params := c.QueryParams()
+	res, err := t.service.FindAll(params)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
 			ResponseError{Errors: []Error{{Code: errors.CodeInternalServerError, Message: err.Error()}}})

@@ -2,6 +2,8 @@
 package service
 
 import (
+	"net/url"
+
 	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 	"github.com/zuu-development/fullstack-examination-2024/internal/repository"
 )
@@ -12,7 +14,7 @@ type Todo interface {
 	Update(id int, task string, status model.Status) (*model.Todo, error)
 	Delete(id int) error
 	Find(id int) (*model.Todo, error)
-	FindAll() ([]*model.Todo, error)
+	FindAll(qry url.Values) ([]*model.Todo, error)
 }
 
 type todo struct {
@@ -67,8 +69,15 @@ func (t *todo) Find(id int) (*model.Todo, error) {
 	return todo, nil
 }
 
-func (t *todo) FindAll() ([]*model.Todo, error) {
-	todo, err := t.todoRepository.FindAll()
+func (t *todo) FindAll(qry url.Values) ([]*model.Todo, error) {
+	processedQry := map[string]interface{}{}
+	if val, ok := qry["task"]; ok {
+		processedQry["task"] = val
+	}
+	if val, ok := qry["status"]; ok {
+		processedQry["status"] = val
+	}
+	todo, err := t.todoRepository.FindAll(processedQry)
 	if err != nil {
 		return nil, err
 	}
