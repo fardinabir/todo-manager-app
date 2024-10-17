@@ -43,10 +43,18 @@ func TestTodoHandler_Create(t *testing.T) {
 	}{
 		{
 			name:       "successful_create",
+			createBody: `{"task":"Created Task", "priority":10}`,
+			want: want{
+				StatusCode: http.StatusCreated,
+				Response:   []byte(`{"data":{"Task":"Created Task", "Priority":10, "Status":"created"}}`),
+			},
+		},
+		{
+			name:       "successful_create_without_priority",
 			createBody: `{"task":"Created Task"}`,
 			want: want{
 				StatusCode: http.StatusCreated,
-				Response:   []byte(`{"data":{"Task":"Created Task","Status":"created"}}`),
+				Response:   []byte(`{"data":{"Task":"Created Task", "Priority":0, "Status":"created"}}`),
 			},
 		},
 		{
@@ -54,7 +62,7 @@ func TestTodoHandler_Create(t *testing.T) {
 			createBody: `{"task":"Created Task", "status":"done"}`,
 			want: want{
 				StatusCode: http.StatusCreated,
-				Response:   []byte(`{"data":{"Task":"Created Task","Status":"created"}}`),
+				Response:   []byte(`{"data":{"Task":"Created Task", "Priority":0, "Status":"created"}}`),
 			},
 		},
 		{
@@ -128,7 +136,16 @@ func TestTodoHandler_Update(t *testing.T) {
 			updateBody: `{"task":"Updated Task","status":"done"}`,
 			want: want{
 				StatusCode: http.StatusOK,
-				Response:   []byte(`{"data":{"Task":"Updated Task","Status":"done"}}`),
+				Response:   []byte(`{"data":{"Task":"Updated Task","Status":"done", "Priority":0}}`),
+			},
+		},
+		{
+			name:       "successful_update_with_priority",
+			createBody: `{"task":"Updated Task"}`,
+			updateBody: `{"task":"Updated Task","status":"done", "priority":3}`,
+			want: want{
+				StatusCode: http.StatusOK,
+				Response:   []byte(`{"data":{"Task":"Updated Task","Status":"done", "Priority":3}}`),
 			},
 		},
 		{

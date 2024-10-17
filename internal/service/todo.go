@@ -10,8 +10,8 @@ import (
 
 // Todo is the service for the todo endpoint.
 type Todo interface {
-	Create(task string) (*model.Todo, error)
-	Update(id int, task string, status model.Status) (*model.Todo, error)
+	Create(task string, priority int) (*model.Todo, error)
+	Update(id, priority int, task string, status model.Status) (*model.Todo, error)
 	Delete(id int) error
 	Find(id int) (*model.Todo, error)
 	FindAll(qry url.Values) ([]*model.Todo, error)
@@ -26,16 +26,16 @@ func NewTodo(r repository.Todo) Todo {
 	return &todo{r}
 }
 
-func (t *todo) Create(task string) (*model.Todo, error) {
-	todo := model.NewTodo(task)
+func (t *todo) Create(task string, priority int) (*model.Todo, error) {
+	todo := model.NewTodo(task, priority)
 	if err := t.todoRepository.Create(todo); err != nil {
 		return nil, err
 	}
 	return todo, nil
 }
 
-func (t *todo) Update(id int, task string, status model.Status) (*model.Todo, error) {
-	todo := model.NewUpdateTodo(id, task, status)
+func (t *todo) Update(id, priority int, task string, status model.Status) (*model.Todo, error) {
+	todo := model.NewUpdateTodo(id, priority, task, status)
 	// 現在の値を取得
 	currentTodo, err := t.Find(id)
 	if err != nil {
@@ -47,6 +47,9 @@ func (t *todo) Update(id int, task string, status model.Status) (*model.Todo, er
 	}
 	if todo.Status == "" {
 		todo.Status = currentTodo.Status
+	}
+	if todo.Priority == 0 {
+		todo.Priority = currentTodo.Priority
 	}
 	if err := t.todoRepository.Update(todo); err != nil {
 		return nil, err
@@ -77,6 +80,9 @@ func (t *todo) FindAll(qry url.Values) ([]*model.Todo, error) {
 	if val, ok := qry["status"]; ok {
 		processedQry["status"] = val
 	}
+	//if val, ok := qry["ordered"]; ok {
+	//	processedQry["ordered"] = val
+	//}
 	todo, err := t.todoRepository.FindAll(processedQry)
 	if err != nil {
 		return nil, err

@@ -71,7 +71,7 @@ func (td *todo) FindAll(qry map[string]interface{}) ([]*model.Todo, error) {
 	if len(qry) > 0 {
 		tx = tx.Where(qry)
 	}
-	err := tx.Find(&todos).Error
+	err := tx.Order("priority desc").Order("created_at desc").Find(&todos).Error
 	if err != nil {
 		return nil, err
 	}
