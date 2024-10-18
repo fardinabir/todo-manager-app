@@ -4,7 +4,7 @@
     <div v-if="statusMessage" class="status-message">{{ statusMessage }}</div>
     <div class="input-group">
       <input v-model="newTask.task" placeholder="新しいタスクを入力 | Enter a new Task " @keyup.enter="addTodo">
-      <select v-model="newTask.priority">
+      <select v-model="newTask.priority" @keyup.enter="addTodo">
         <option value=0 disabled selected hidden>Select Priority</option>
         <option value=3>High</option>
         <option value=2>Medium</option>
@@ -29,42 +29,65 @@
     <div v-if="hasTodos">
       <div v-if="isPendingView">
         <h2>Pending Tasks</h2>
-        <div v-for="todo in pendingTodos" :key="todo.ID" class="todo-item">
-          <input
-              v-if="todo.isEditing"
-              v-model="todo.Task"
-              class="edit-input"
-              @blur="editTodo(todo)"
-              @keyup.enter="editTodo(todo)"
-          >
-          <span v-else @click="enableEdit(todo)">{{ todo.Task }}</span>
-          <div class="buttons">
-            <button @click="updateStatus(todo)">✔️</button>
-            <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+        <div v-if="pendingTodos.length !== 0" class="task-panel">
+          <div v-for="todo in pendingTodos" :key="todo.ID" class="todo-item">
+            <input
+                v-if="todo.isEditing"
+                v-model="todo.Task"
+                class="edit-input"
+                @blur="editTodo(todo)"
+                @keyup.enter="editTodo(todo)"
+            >
+            <span v-else @click="enableEdit(todo)">{{ todo.Task }}</span>
+            <div class="buttons">
+              <!-- Priority Button (default) -->
+              <template v-if="!todo.isEditingPriority">
+                <button class="priority-button"
+                        @click="enablePriorityEdit(todo)">
+                  {{ getPriorityLabel(todo.Priority) }}
+                </button>
+              </template>
+
+              <!-- Priority Select (shown when editing) -->
+              <template v-else>
+                <select v-model="todo.Priority"
+                        @blur="updateTodoPriority(todo)"
+                        @keyup.enter="updateTodoPriority(todo)">
+                  <option value=3>High</option>
+                  <option value=2>Medium</option>
+                  <option value=1>Low</option>
+                </select>
+              </template>
+
+              <button @click="updateStatus(todo)">✔️</button>
+              <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+            </div>
           </div>
         </div>
-        <div v-if="pendingTodos.length === 0">
+        <div v-else>
           <p>保留中のタスクはありません。| There are no pending tasks.</p>
         </div>
       </div>
 
       <div v-if="isCompletedView" >
         <h2>Done Tasks</h2>
-        <div v-for="todo in completedTodos" :key="todo.ID" class="todo-item">
-          <input
-              v-if="todo.isEditing"
-              v-model="todo.Task"
-              class="edit-input"
-              @blur="editTodo(todo)"
-              @keyup.enter="editTodo(todo)"
-          >
-          <span v-else class="done-task" @click="enableEdit(todo)">{{ todo.Task }}</span>
-          <div class="buttons">
-            <button class="done" @click="updateStatus(todo)">✔️</button>
-            <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+        <div v-if="completedTodos.length !== 0" class="task-panel">
+          <div v-for="todo in completedTodos" :key="todo.ID" class="todo-item">
+            <input
+                v-if="todo.isEditing"
+                v-model="todo.Task"
+                class="edit-input"
+                @blur="editTodo(todo)"
+                @keyup.enter="editTodo(todo)"
+            >
+            <span v-else class="done-task" @click="enableEdit(todo)">{{ todo.Task }}</span>
+            <div class="buttons">
+              <button class="done" @click="updateStatus(todo)">✔️</button>
+              <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+            </div>
           </div>
         </div>
-        <div v-if="completedTodos.length === 0">
+        <div v-else>
           <p>完了したタスクはありません。| There are no completed tasks.</p>
         </div>
       </div>
@@ -114,6 +137,21 @@ export default {
     this.fetchTodos();
   },
   methods: {
+    getPriorityLabel(priority) {
+      switch (priority) {
+        case 3:
+          return 'High';
+        case 2:
+          return 'Medium';
+        case 1:
+          return 'Low';
+        default:
+          return '';
+      }
+    },
+    enablePriorityEdit(todo) {
+      todo.isEditingPriority = true;
+    },
     async fetchTodos() {
       const params = new URLSearchParams();
       if (this.query.task) params.append('task', this.query.task);
@@ -140,10 +178,39 @@ export default {
         this.statusMessage = 'Failed to fetch todos.';
       }
     },
+    async updateTodoPriority(todo) {
+      todo.isEditingPriority = false;
+      todo.Priority = parseInt(todo.Priority, 10);
+      try {
+        const response = await fetch(`/api/v1/todos/${todo.ID}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            priority: todo.Priority,
+          })
+        });
+
+        if (!response.ok) throw new Error(`Failed to update priority. statusCode: ${response.status}`);
+        this.todos.sort((a, b) => {
+          if (a.Priority !== b.Priority) {
+            return b.Priority - a.Priority;
+          }
+          return new Date(b.CreatedAt) - new Date(a.CreatedAt);
+        });
+        this.statusMessage = '優先度が正常に更新されました| Priority updated successfully';
+      } catch (error) {
+        console.error('Error updating priority:', error);
+        this.statusMessage = '優先順位の更新に失敗しました | Failed to update priority';
+      }
+    },
     async addTodo() {
       if (this.newTask.task.trim() === '') return;
 
       try {
+        let priority = parseInt(this.newTask.priority, 10) ? parseInt(this.newTask.priority, 10) : 1;
+
         const response = await fetch('/api/v1/todos', {
           method: 'POST',
           headers: {
@@ -151,7 +218,7 @@ export default {
           },
           body: JSON.stringify({
             task: this.newTask.task,
-            priority: parseInt(this.newTask.priority, 10),
+            priority: priority,
             Status: 'created'
           })
         });
@@ -168,7 +235,7 @@ export default {
           });
           this.newTask = {
             task: '',
-            priority: parseInt(this.newTask.priority, 10)
+            priority: priority,
           };
           this.statusMessage = 'タスクが追加されました | TODO added';
         });
@@ -252,19 +319,6 @@ export default {
   margin-bottom: 20px;
 }
 
-.query-section button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #333;
-  color: #fff;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.query-section button:hover {
-  background-color: #555;
-}
-
 .query-section input,
 .query-section select {
   flex: 1;
@@ -278,7 +332,16 @@ export default {
   margin: 20px auto;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.task-panel {
+  max-width: 800px;
+  margin: 5px auto;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   background-color: #fff;
 }
 
