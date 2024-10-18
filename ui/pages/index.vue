@@ -17,14 +17,13 @@
       <input
           v-model="query.task"
           placeholder="Filter by Task Name"
-          @keyup.enter="fetchTodos"
+          @input="fetchTodos"
       >
       <select v-model="query.status" @change="fetchTodos">
         <option value="">All Statuses</option>
         <option value="created">Created</option>
         <option value="done">Done</option>
       </select>
-      <button @click="fetchTodos">Search</button>
     </div>
 
     <div v-if="hasTodos">
@@ -37,16 +36,16 @@
               class="edit-input"
               @blur="editTodo(todo)"
               @keyup.enter="editTodo(todo)"
-          />
+          >
           <span v-else @click="enableEdit(todo)">{{ todo.Task }}</span>
           <div class="buttons">
             <button @click="updateStatus(todo)">✔️</button>
             <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
           </div>
         </div>
-      </div>
-      <div v-if="pendingTodos.length === 0">
-        <p>保留中のタスクはありません。| There are no pending tasks.</p>
+        <div v-if="pendingTodos.length === 0">
+          <p>保留中のタスクはありません。| There are no pending tasks.</p>
+        </div>
       </div>
 
       <div v-if="isCompletedView" >
@@ -58,18 +57,19 @@
               class="edit-input"
               @blur="editTodo(todo)"
               @keyup.enter="editTodo(todo)"
-          />
+          >
           <span v-else class="done-task" @click="enableEdit(todo)">{{ todo.Task }}</span>
           <div class="buttons">
             <button class="done" @click="updateStatus(todo)">✔️</button>
             <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
           </div>
         </div>
+        <div v-if="completedTodos.length === 0">
+          <p>完了したタスクはありません。| There are no completed tasks.</p>
+        </div>
       </div>
     </div>
-    <div v-if="completedTodos.length === 0">
-      <p>完了したタスクはありません。| There are no completed tasks.</p>
-    </div>
+
     <div v-else>
       <p>タスクがありません。| There are no tasks.</p>
     </div>

@@ -68,6 +68,11 @@ func (td *todo) Find(id int) (*model.Todo, error) {
 func (td *todo) FindAll(qry map[string]interface{}) ([]*model.Todo, error) {
 	var todos []*model.Todo
 	tx := td.db
+
+	if val, ok := qry["task"].(string); ok {
+		tx = tx.Where("task LIKE ?", "%"+val+"%")
+		delete(qry, "task")
+	}
 	if len(qry) > 0 {
 		tx = tx.Where(qry)
 	}
