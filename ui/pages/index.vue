@@ -155,12 +155,17 @@ export default {
 
         response.json().then(data => {
           this.todos.push(data.data);
+          this.todos.sort((a, b) => {
+            if (a.Priority !== b.Priority) {
+              return b.Priority - a.Priority;
+            }
+            return new Date(b.CreatedAt) - new Date(a.CreatedAt);
+          });
           this.newTask = {
             task: '',
             priority: parseInt(this.newTask.priority, 10)
           };
           this.statusMessage = 'タスクが追加されました | TODO added';
-          this.fetchTodos();
         });
       } catch (error) {
         console.error('Error creating todo:', error);
