@@ -13,7 +13,6 @@
       <button @click="addTodo"> 追加 </button>
     </div>
 
-    <!-- Query Input Section -->
     <div class="query-section">
       <input
           v-model="query.task"
@@ -28,24 +27,53 @@
       <button @click="fetchTodos">Search</button>
     </div>
 
-    <div v-if="todos.length > 0">
-      <div v-for="todo in todos" :key="todo.ID" class="todo-item">
-        <input
-            v-if="todo.isEditing" v-model="todo.Task" class="edit-input" @blur="editTodo(todo)"
-            @keyup.enter="editTodo(todo)">
-        <span v-else :class="{ 'done-task': todo.Status === 'done' }" @click="enableEdit(todo)">{{ todo.Task
-          }}</span>
-        <div class="buttons">
-          <button :class="{ 'done': todo.Status === 'done' }" @click="updateStatus(todo)">
-            ✔️
-          </button>
-          <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+    <div v-if="hasTodos">
+      <div v-if="isPendingView">
+        <h2>Pending Tasks</h2>
+        <div v-for="todo in pendingTodos" :key="todo.ID" class="todo-item">
+          <input
+              v-if="todo.isEditing"
+              v-model="todo.Task"
+              class="edit-input"
+              @blur="editTodo(todo)"
+              @keyup.enter="editTodo(todo)"
+          />
+          <span v-else @click="enableEdit(todo)">{{ todo.Task }}</span>
+          <div class="buttons">
+            <button @click="updateStatus(todo)">✔️</button>
+            <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+          </div>
         </div>
       </div>
+      <div v-if="pendingTodos.length === 0">
+        <p>保留中のタスクはありません。| There are no pending tasks.</p>
+      </div>
+
+      <div v-if="isCompletedView" >
+        <h2>Done Tasks</h2>
+        <div v-for="todo in completedTodos" :key="todo.ID" class="todo-item">
+          <input
+              v-if="todo.isEditing"
+              v-model="todo.Task"
+              class="edit-input"
+              @blur="editTodo(todo)"
+              @keyup.enter="editTodo(todo)"
+          />
+          <span v-else class="done-task" @click="enableEdit(todo)">{{ todo.Task }}</span>
+          <div class="buttons">
+            <button class="done" @click="updateStatus(todo)">✔️</button>
+            <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="completedTodos.length === 0">
+      <p>完了したタスクはありません。| There are no completed tasks.</p>
     </div>
     <div v-else>
       <p>タスクがありません。| There are no tasks.</p>
     </div>
+
   </div>
 </template>
 
@@ -64,6 +92,23 @@ export default {
       },
       statusMessage: '',
     };
+  },
+  computed: {
+    hasTodos() {
+      return this.todos.length > 0;
+    },
+    isPendingView() {
+      return !this.query.status || this.query.status === 'created';
+    },
+    isCompletedView() {
+      return !this.query.status || this.query.status === 'done';
+    },
+    pendingTodos() {
+      return this.todos.filter(todo => todo.Status === 'created');
+    },
+    completedTodos() {
+      return this.todos.filter(todo => todo.Status === 'done');
+    }
   },
   mounted() {
     this.fetchTodos();
@@ -115,12 +160,17 @@ export default {
 
         response.json().then(data => {
           this.todos.push(data.data);
+          this.todos.sort((a, b) => {
+            if (a.Priority !== b.Priority) {
+              return b.Priority - a.Priority;
+            }
+            return new Date(b.CreatedAt) - new Date(a.CreatedAt);
+          });
           this.newTask = {
             task: '',
             priority: parseInt(this.newTask.priority, 10)
           };
           this.statusMessage = 'タスクが追加されました | TODO added';
-          this.fetchTodos();
         });
       } catch (error) {
         console.error('Error creating todo:', error);
