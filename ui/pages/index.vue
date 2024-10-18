@@ -13,7 +13,6 @@
       <button @click="addTodo"> 追加 </button>
     </div>
 
-    <!-- Query Input Section -->
     <div class="query-section">
       <input
           v-model="query.task"
@@ -46,6 +45,9 @@
           </div>
         </div>
       </div>
+      <div v-if="pendingTodos.length === 0">
+        <p>保留中のタスクはありません。| There are no pending tasks.</p>
+      </div>
 
       <div v-if="isCompletedView" >
         <h2>Done Tasks</h2>
@@ -64,6 +66,9 @@
           </div>
         </div>
       </div>
+    </div>
+    <div v-if="completedTodos.length === 0">
+      <p>完了したタスクはありません。| There are no completed tasks.</p>
     </div>
     <div v-else>
       <p>タスクがありません。| There are no tasks.</p>
