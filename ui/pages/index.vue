@@ -29,42 +29,46 @@
     <div v-if="hasTodos">
       <div v-if="isPendingView">
         <h2>Pending Tasks</h2>
-        <div v-for="todo in pendingTodos" :key="todo.ID" class="todo-item">
-          <input
-              v-if="todo.isEditing"
-              v-model="todo.Task"
-              class="edit-input"
-              @blur="editTodo(todo)"
-              @keyup.enter="editTodo(todo)"
-          >
-          <span v-else @click="enableEdit(todo)">{{ todo.Task }}</span>
-          <div class="buttons">
-            <button @click="updateStatus(todo)">✔️</button>
-            <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+        <div v-if="pendingTodos.length !== 0" class="task-panel">
+          <div v-for="todo in pendingTodos" :key="todo.ID" class="todo-item">
+            <input
+                v-if="todo.isEditing"
+                v-model="todo.Task"
+                class="edit-input"
+                @blur="editTodo(todo)"
+                @keyup.enter="editTodo(todo)"
+            >
+            <span v-else @click="enableEdit(todo)">{{ todo.Task }}</span>
+            <div class="buttons">
+              <button @click="updateStatus(todo)">✔️</button>
+              <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+            </div>
           </div>
         </div>
-        <div v-if="pendingTodos.length === 0">
+        <div v-else>
           <p>保留中のタスクはありません。| There are no pending tasks.</p>
         </div>
       </div>
 
       <div v-if="isCompletedView" >
         <h2>Done Tasks</h2>
-        <div v-for="todo in completedTodos" :key="todo.ID" class="todo-item">
-          <input
-              v-if="todo.isEditing"
-              v-model="todo.Task"
-              class="edit-input"
-              @blur="editTodo(todo)"
-              @keyup.enter="editTodo(todo)"
-          >
-          <span v-else class="done-task" @click="enableEdit(todo)">{{ todo.Task }}</span>
-          <div class="buttons">
-            <button class="done" @click="updateStatus(todo)">✔️</button>
-            <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+        <div v-if="completedTodos.length !== 0" class="task-panel">
+          <div v-for="todo in completedTodos" :key="todo.ID" class="todo-item">
+            <input
+                v-if="todo.isEditing"
+                v-model="todo.Task"
+                class="edit-input"
+                @blur="editTodo(todo)"
+                @keyup.enter="editTodo(todo)"
+            >
+            <span v-else class="done-task" @click="enableEdit(todo)">{{ todo.Task }}</span>
+            <div class="buttons">
+              <button class="done" @click="updateStatus(todo)">✔️</button>
+              <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+            </div>
           </div>
         </div>
-        <div v-if="completedTodos.length === 0">
+        <div v-else>
           <p>完了したタスクはありません。| There are no completed tasks.</p>
         </div>
       </div>
@@ -252,19 +256,6 @@ export default {
   margin-bottom: 20px;
 }
 
-.query-section button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #333;
-  color: #fff;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.query-section button:hover {
-  background-color: #555;
-}
-
 .query-section input,
 .query-section select {
   flex: 1;
@@ -278,7 +269,16 @@ export default {
   margin: 20px auto;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.task-panel {
+  max-width: 800px;
+  margin: 5px auto;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   background-color: #fff;
 }
 
