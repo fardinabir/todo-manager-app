@@ -42,17 +42,20 @@
             <div class="buttons">
               <!-- Priority Button (default) -->
               <template v-if="!todo.isEditingPriority">
-                <button class="priority-button"
-                        @click="enablePriorityEdit(todo)">
+                <button
+                    class="priority-button"
+                    @click="enablePriorityEdit(todo)">
                   {{ getPriorityLabel(todo.Priority) }}
                 </button>
               </template>
 
               <!-- Priority Select (shown when editing) -->
               <template v-else>
-                <select v-model="todo.Priority"
-                        @blur="updateTodoPriority(todo)"
-                        @keyup.enter="updateTodoPriority(todo)">
+                <select
+                  v-model="todo.Priority"
+                  @blur="updateTodoPriority(todo)"
+                  @keyup.enter="updateTodoPriority(todo)"
+                >
                   <option value=3>High</option>
                   <option value=2>Medium</option>
                   <option value=1>Low</option>
@@ -209,7 +212,7 @@ export default {
       if (this.newTask.task.trim() === '') return;
 
       try {
-        let priority = parseInt(this.newTask.priority, 10) ? parseInt(this.newTask.priority, 10) : 1;
+        const priority = parseInt(this.newTask.priority, 10) ? parseInt(this.newTask.priority, 10) : 1;
 
         const response = await fetch('/api/v1/todos', {
           method: 'POST',
@@ -337,7 +340,7 @@ export default {
 }
 
 .task-panel {
-  max-width: 800px;
+  max-width: 400px;
   margin: 5px auto;
   padding: 10px;
   border-radius: 8px;
