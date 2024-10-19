@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,7 +17,7 @@ type TestRequest struct {
 
 func TestMustBind(t *testing.T) {
 	e := echo.New()
-	e.Validator = &CustomValidator{validator: validator.New()}
+	e.Validator = NewCustomValidator()
 	h := Handler{}
 
 	tests := []struct {

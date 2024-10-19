@@ -3,12 +3,12 @@ package handler
 import (
 	"bytes"
 	"encoding/json"
+	"gorm.io/gorm"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"testing"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/google/go-cmp/cmp"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
@@ -26,7 +26,7 @@ func TestTodoHandler_Create(t *testing.T) {
 	}
 
 	e := echo.New()
-	e.Validator = &CustomValidator{validator: validator.New()}
+	e.Validator = NewCustomValidator()
 	dbInstance, err := db.NewMemory()
 	require.NoError(t, err)
 	err = db.Migrate(dbInstance)
@@ -43,26 +43,32 @@ func TestTodoHandler_Create(t *testing.T) {
 	}{
 		{
 			name:       "successful_create",
-			createBody: `{"task":"Created Task", "priority":10}`,
+			createBody: `{"task":"Created Task", "priority":1}`,
 			want: want{
 				StatusCode: http.StatusCreated,
-				Response:   []byte(`{"data":{"Task":"Created Task", "Priority":10, "Status":"created"}}`),
+				Response:   []byte(`{"data":{"Task":"Created Task", "Priority":1, "Status":"created"}}`),
 			},
 		},
 		{
 			name:       "successful_create_without_priority",
 			createBody: `{"task":"Created Task"}`,
 			want: want{
-				StatusCode: http.StatusCreated,
-				Response:   []byte(`{"data":{"Task":"Created Task", "Priority":0, "Status":"created"}}`),
+				StatusCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name:       "create_with_invalid_priority",
+			createBody: `{"task":"Created Task", "priority":-1}`,
+			want: want{
+				StatusCode: http.StatusBadRequest,
 			},
 		},
 		{
 			name:       "successful_create_but_with_ignore_status",
-			createBody: `{"task":"Created Task", "status":"done"}`,
+			createBody: `{"task":"Created Task", "priority":2, "status":"done"}`,
 			want: want{
 				StatusCode: http.StatusCreated,
-				Response:   []byte(`{"data":{"Task":"Created Task", "Priority":0, "Status":"created"}}`),
+				Response:   []byte(`{"data":{"Task":"Created Task", "Priority":2, "Status":"created"}}`),
 			},
 		},
 		{
@@ -113,7 +119,7 @@ func TestTodoHandler_Update(t *testing.T) {
 	}
 
 	e := echo.New()
-	e.Validator = &CustomValidator{validator: validator.New()}
+	e.Validator = NewCustomValidator()
 	dbInstance, err := db.NewMemory()
 	require.NoError(t, err)
 	err = db.Migrate(dbInstance)
@@ -132,16 +138,16 @@ func TestTodoHandler_Update(t *testing.T) {
 	}{
 		{
 			name:       "successful_update",
-			createBody: `{"task":"Updated Task"}`,
+			createBody: `{"task":"Updated Task", "priority":1}`,
 			updateBody: `{"task":"Updated Task","status":"done"}`,
 			want: want{
 				StatusCode: http.StatusOK,
-				Response:   []byte(`{"data":{"Task":"Updated Task","Status":"done", "Priority":0}}`),
+				Response:   []byte(`{"data":{"Task":"Updated Task","Status":"done", "Priority":1}}`),
 			},
 		},
 		{
 			name:       "successful_update_with_priority",
-			createBody: `{"task":"Updated Task"}`,
+			createBody: `{"task":"Updated Task", "priority":2}`,
 			updateBody: `{"task":"Updated Task","status":"done", "priority":3}`,
 			want: want{
 				StatusCode: http.StatusOK,
@@ -155,6 +161,22 @@ func TestTodoHandler_Update(t *testing.T) {
 			want: want{
 				StatusCode: http.StatusOK,
 				Response:   []byte(`{"data":{"Task":"Updated Task","Status":"created", "Priority":2}}`),
+			},
+		},
+		{
+			name:       "update_with_invalid_priority",
+			createBody: `{"task":"Updated Task", "priority":1}`,
+			updateBody: `{"priority":22}`,
+			want: want{
+				StatusCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name:       "update_with_invalid_status",
+			createBody: `{"task":"Updated Task", "priority":1}`,
+			updateBody: `{"task":"Updated Task","status":"pending"}`,
+			want: want{
+				StatusCode: http.StatusBadRequest,
 			},
 		},
 		{
@@ -229,7 +251,7 @@ func TestTodoHandler_Delete(t *testing.T) {
 	}
 
 	e := echo.New()
-	e.Validator = &CustomValidator{validator: validator.New()}
+	e.Validator = NewCustomValidator()
 	dbInstance, err := db.NewMemory()
 	require.NoError(t, err)
 	err = db.Migrate(dbInstance)
@@ -247,7 +269,7 @@ func TestTodoHandler_Delete(t *testing.T) {
 	}{
 		{
 			name:       "successful_delete",
-			createBody: `{"task":"Deleted Task"}`,
+			createBody: `{"task":"Deleted Task", "priority":1}`,
 			want: want{
 				StatusCode: http.StatusNoContent,
 			},
@@ -302,7 +324,7 @@ func TestTodoHandler_Find(t *testing.T) {
 	}
 
 	e := echo.New()
-	e.Validator = &CustomValidator{validator: validator.New()}
+	e.Validator = NewCustomValidator()
 	dbInstance, err := db.NewMemory()
 	require.NoError(t, err)
 	err = db.Migrate(dbInstance)
@@ -320,10 +342,10 @@ func TestTodoHandler_Find(t *testing.T) {
 	}{
 		{
 			name:       "successful_find",
-			createBody: `{"task":"Found Task"}`,
+			createBody: `{"task":"Found Task", "priority":1}`,
 			want: want{
 				StatusCode: http.StatusOK,
-				Response:   []byte(`{"data":{"Task":"Found Task","Status":"created", "Priority":0}}`),
+				Response:   []byte(`{"data":{"Task":"Found Task","Status":"created", "Priority":1}}`),
 			},
 		},
 		{
@@ -384,7 +406,92 @@ func TestTodoHandler_Find(t *testing.T) {
 }
 
 func TestTodoHandler_FindAll(t *testing.T) {
-	t.Skip("Not implemented")
+	type want struct {
+		StatusCode int
+		Response   []byte
+	}
+
+	e := echo.New()
+	e.Validator = NewCustomValidator()
+	dbInstance, err := db.NewMemory()
+	require.NoError(t, err)
+	err = db.Migrate(dbInstance)
+	clearDB(dbInstance, model.Todo{})
+	require.NoError(t, err)
+	repository := repository.NewTodo(dbInstance)
+	service := service.NewTodo(repository)
+	handler := NewTodo(service)
+
+	tests := []struct {
+		name       string
+		createBody []string
+		want       want
+	}{
+		{
+			name: "no_todos_found",
+			want: want{
+				StatusCode: http.StatusOK,
+				Response:   []byte(`{"data":[]}`), // Expecting an empty array
+			},
+		},
+		{
+			name:       "single_todos_found",
+			createBody: []string{`{"task":"Task 1", "priority":1}`},
+			want: want{
+				StatusCode: http.StatusOK,
+				Response:   []byte(`{"data":[{"Task":"Task 1","Priority":1,"Status":"created"}]}`),
+			},
+		},
+		{
+			name:       "multiple_todos_found",
+			createBody: []string{`{"task":"Task 2", "priority":2}`},
+			want: want{
+				StatusCode: http.StatusOK,
+				Response:   []byte(`{"data":[{"Task":"Task 2","Priority":2,"Status":"created"},{"Task":"Task 1","Priority":1,"Status":"created"}]}`),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create a task if needed for the current test case
+			for _, ct := range tt.createBody {
+				createTask(t, e, handler, ct)
+			}
+
+			req := httptest.NewRequest(http.MethodGet, "/todos", nil)
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+			c.SetPath("/todos")
+
+			// Execute
+			require.NoError(t, handler.FindAll(c))
+
+			// Assert
+			assert.Equal(t, tt.want.StatusCode, rec.Code)
+
+			if tt.want.Response == nil {
+				return
+			}
+			got := rec.Body.Bytes()
+
+			opts := []cmp.Option{
+				cmpTransformJSON(t),
+				ignoreMapEntires(map[string]any{"CreatedAt": 1, "UpdatedAt": 1, "ID": 1}),
+			}
+			if diff := cmp.Diff(got, tt.want.Response, opts...); diff != "" {
+				t.Errorf("return value mismatch (-got +want):\n%s", diff)
+				t.Logf("got:\n%s", string(got))
+			}
+		})
+	}
+}
+
+func clearDB(db *gorm.DB, models ...interface{}) {
+	for _, model := range models {
+		db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(model)
+	}
 }
 
 func createTask(t *testing.T, e *echo.Echo, handler TodoHandler, body string) int {
