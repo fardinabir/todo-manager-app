@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"github.com/fardinabir/todo-manager-app/internal/model"
 	"github.com/go-playground/validator/v10"
-	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 )
 
 // CustomValidator is a custom validator for the echo framework

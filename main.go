@@ -2,8 +2,8 @@
 package main
 
 import (
-	"github.com/zuu-development/fullstack-examination-2024/cmd"
-	_ "github.com/zuu-development/fullstack-examination-2024/docs"
+	"github.com/fardinabir/todo-manager-app/cmd"
+	_ "github.com/fardinabir/todo-manager-app/docs"
 )
 
 // @title			fullstack-examination-2024 API

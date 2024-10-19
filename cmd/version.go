@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/fardinabir/todo-manager-app/internal/common"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/zuu-development/fullstack-examination-2024/internal/common"
 )
 
 func init() {

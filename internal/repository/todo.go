@@ -2,8 +2,8 @@
 package repository
 
 import (
+	"github.com/fardinabir/todo-manager-app/internal/model"
 	log "github.com/sirupsen/logrus"
-	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 	"gorm.io/gorm"
 )
 

@@ -1,9 +1,9 @@
 package handler
 
 import (
+	"github.com/fardinabir/todo-manager-app/internal/repository"
+	"github.com/fardinabir/todo-manager-app/internal/service"
 	"github.com/labstack/echo/v4"
-	"github.com/zuu-development/fullstack-examination-2024/internal/repository"
-	"github.com/zuu-development/fullstack-examination-2024/internal/service"
 	"gorm.io/gorm"
 )
 

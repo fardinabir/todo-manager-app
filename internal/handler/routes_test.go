@@ -5,10 +5,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/fardinabir/todo-manager-app/internal/db"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zuu-development/fullstack-examination-2024/internal/db"
 )
 
 func TestRegister(t *testing.T) {

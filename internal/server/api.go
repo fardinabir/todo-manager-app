@@ -5,13 +5,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/fardinabir/todo-manager-app/internal/common"
+	"github.com/fardinabir/todo-manager-app/internal/db"
+	"github.com/fardinabir/todo-manager-app/internal/handler"
+	"github.com/fardinabir/todo-manager-app/internal/model"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	log "github.com/sirupsen/logrus"
-	"github.com/zuu-development/fullstack-examination-2024/internal/common"
-	"github.com/zuu-development/fullstack-examination-2024/internal/db"
-	"github.com/zuu-development/fullstack-examination-2024/internal/handler"
-	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 	"gorm.io/gorm"
 )
 

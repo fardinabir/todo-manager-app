@@ -15,9 +15,9 @@ builds:
     flags:
       - -v
     ldflags:
-      - -X github.com/zuu-development/fullstack-examination-2024/internal/common.version={{ .Version }}
-      - -X github.com/zuu-development/fullstack-examination-2024/internal/common.buildDate={{ .Date }}
-      - -X github.com/zuu-development/fullstack-examination-2024/internal/common.gitCommit={{ .FullCommit }}
+      - -X github.com/fardinabir/todo-manager-app/internal/common.version={{ .Version }}
+      - -X github.com/fardinabir/todo-manager-app/internal/common.buildDate={{ .Date }}
+      - -X github.com/fardinabir/todo-manager-app/internal/common.gitCommit={{ .FullCommit }}
     goos:
       - linux
       - darwin
@@ -41,7 +41,7 @@ release:
   prerelease: auto
   draft: false
   footer: |
-    **Full Changelog**: https://github.com/zuu-development/fullstack-examination-2024/compare/{{ .PreviousTag }}...{{ .Tag }}
+    **Full Changelog**: https://github.com/fardinabir/todo-manager-app/compare/{{ .PreviousTag }}...{{ .Tag }}
 
 changelog:
   use:

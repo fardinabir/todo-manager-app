@@ -3,20 +3,20 @@ package handler
 import (
 	"bytes"
 	"encoding/json"
-	"gorm.io/gorm"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"testing"
 
+	"github.com/fardinabir/todo-manager-app/internal/db"
+	"github.com/fardinabir/todo-manager-app/internal/model"
+	"github.com/fardinabir/todo-manager-app/internal/repository"
+	"github.com/fardinabir/todo-manager-app/internal/service"
 	"github.com/google/go-cmp/cmp"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zuu-development/fullstack-examination-2024/internal/db"
-	"github.com/zuu-development/fullstack-examination-2024/internal/model"
-	"github.com/zuu-development/fullstack-examination-2024/internal/repository"
-	"github.com/zuu-development/fullstack-examination-2024/internal/service"
+	"gorm.io/gorm"
 )
 
 func TestTodoHandler_Create(t *testing.T) {

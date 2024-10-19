@@ -4,8 +4,8 @@ package service
 import (
 	"net/url"
 
-	"github.com/zuu-development/fullstack-examination-2024/internal/model"
-	"github.com/zuu-development/fullstack-examination-2024/internal/repository"
+	"github.com/fardinabir/todo-manager-app/internal/model"
+	"github.com/fardinabir/todo-manager-app/internal/repository"
 )
 
 // Todo is the service for the todo endpoint.

@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/zuu-development/fullstack-examination-2024/internal/model"
+	"github.com/fardinabir/todo-manager-app/internal/model"
 	"gorm.io/gorm"
 )
 

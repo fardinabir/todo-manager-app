@@ -1,4 +1,4 @@
-COMMON_PACKAGE=github.com/zuu-development/fullstack-examination-2024/internal/common
+COMMON_PACKAGE=github.com/fardinabir/todo-manager-app/internal/common
 CURRENT_DIR=$(shell pwd)
 DIST_DIR=${CURRENT_DIR}/dist
 CLI_NAME=todo-cli

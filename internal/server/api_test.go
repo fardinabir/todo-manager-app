@@ -3,11 +3,11 @@ package server
 import (
 	"testing"
 
+	"github.com/fardinabir/todo-manager-app/internal/model"
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 	"gorm.io/gorm"
 )
 

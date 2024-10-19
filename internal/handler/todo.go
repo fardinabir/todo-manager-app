@@ -3,10 +3,10 @@ package handler
 import (
 	"net/http"
 
+	"github.com/fardinabir/todo-manager-app/internal/errors"
+	"github.com/fardinabir/todo-manager-app/internal/model"
+	"github.com/fardinabir/todo-manager-app/internal/service"
 	"github.com/labstack/echo/v4"
-	"github.com/zuu-development/fullstack-examination-2024/internal/errors"
-	"github.com/zuu-development/fullstack-examination-2024/internal/model"
-	"github.com/zuu-development/fullstack-examination-2024/internal/service"
 )
 
 // TodoHandler is the request handler for the todo endpoint.
