@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/go-playground/validator/v10"
+	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 )
 
 // CustomValidator is a custom validator for the echo framework
@@ -15,4 +16,14 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func NewCustomValidator() *CustomValidator {
+	v := validator.New()
+
+	// Register the custom validation for Priority
+	_ = v.RegisterValidation("validPriority", model.IsValidPriority)
+	_ = v.RegisterValidation("validStatus", model.IsValidStatus)
+
+	return &CustomValidator{validator: v}
 }

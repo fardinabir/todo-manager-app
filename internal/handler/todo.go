@@ -31,7 +31,7 @@ func NewTodo(s service.Todo) TodoHandler {
 // CreateRequest is the request parameter for creating a new todo
 type CreateRequest struct {
 	Task     string         `json:"task" validate:"required"`
-	Priority model.Priority `json:"priority"`
+	Priority model.Priority `json:"priority" validate:"required,validPriority"`
 }
 
 // @Summary	Create a new todo
@@ -68,8 +68,8 @@ type UpdateRequest struct {
 // UpdateRequestBody is the request body for updating a todo
 type UpdateRequestBody struct {
 	Task     string         `json:"task,omitempty"`
-	Status   model.Status   `json:"status,omitempty"`
-	Priority model.Priority `json:"priority,omitempty"`
+	Status   model.Status   `json:"status,omitempty" validate:"validStatus"`
+	Priority model.Priority `json:"priority,omitempty" validate:"validPriority"`
 }
 
 // UpdateRequestPath is the request parameter for updating a todo

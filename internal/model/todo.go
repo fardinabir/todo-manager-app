@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"github.com/go-playground/validator/v10"
+	"time"
+)
 
 // Todo is the model for the todo endpoint.
 type Todo struct {
@@ -50,6 +53,15 @@ var StatusMap = map[Status]bool{
 	Done:       true,
 }
 
+// IsValidStatus checks if the status is valid (Created, Processing, Done)
+func IsValidStatus(fl validator.FieldLevel) bool {
+	if fl.Field().IsZero() {
+		return true // Skip validation for empty or nil fields
+	}
+	status := fl.Field().Interface().(Status)
+	return status == Created || status == Processing || status == Done
+}
+
 // Priority is the priority of the task.
 type Priority int
 
@@ -61,3 +73,12 @@ const (
 	// High is the highest priority of task
 	High
 )
+
+// IsValidPriority checks if the priority is valid (High, Medium, Low)
+func IsValidPriority(fl validator.FieldLevel) bool {
+	if fl.Field().IsZero() {
+		return true // Skip validation for empty or nil fields
+	}
+	priority := fl.Field().Interface().(Priority)
+	return priority == Low || priority == Medium || priority == High
+}
