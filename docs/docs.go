@@ -312,11 +312,12 @@ const docTemplate = `{
         "handler.CreateRequest": {
             "type": "object",
             "required": [
+                "priority",
                 "task"
             ],
             "properties": {
                 "priority": {
-                    "type": "integer"
+                    "$ref": "#/definitions/model.Priority"
                 },
                 "task": {
                     "type": "string"
@@ -357,6 +358,9 @@ const docTemplate = `{
         "handler.UpdateRequestBody": {
             "type": "object",
             "properties": {
+                "priority": {
+                    "$ref": "#/definitions/model.Priority"
+                },
                 "status": {
                     "$ref": "#/definitions/model.Status"
                 },
@@ -364,6 +368,19 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "model.Priority": {
+            "type": "integer",
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "Low",
+                "Medium",
+                "High"
+            ]
         },
         "model.Status": {
             "type": "string",
@@ -388,7 +405,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "priority": {
-                    "type": "integer"
+                    "$ref": "#/definitions/model.Priority"
                 },
                 "status": {
                     "$ref": "#/definitions/model.Status"
