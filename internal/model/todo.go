@@ -1,8 +1,9 @@
 package model
 
 import (
-	"github.com/go-playground/validator/v10"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 // Todo is the model for the todo endpoint.

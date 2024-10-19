@@ -18,6 +18,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return nil
 }
 
+// NewCustomValidator return a custom validator struct registering custom validator functions
 func NewCustomValidator() *CustomValidator {
 	v := validator.New()
 
