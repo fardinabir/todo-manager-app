@@ -1,16 +1,15 @@
 package handler
 
 import (
-	"github.com/go-playground/validator/v10"
+	"github.com/fardinabir/todo-manager-app/internal/repository"
+	"github.com/fardinabir/todo-manager-app/internal/service"
 	"github.com/labstack/echo/v4"
-	"github.com/zuu-development/fullstack-examination-2024/internal/repository"
-	"github.com/zuu-development/fullstack-examination-2024/internal/service"
 	"gorm.io/gorm"
 )
 
 // Register registers the routes for the application.
 func Register(e *echo.Echo, db *gorm.DB) {
-	e.Validator = &CustomValidator{validator: validator.New()}
+	e.Validator = NewCustomValidator()
 
 	api := e.Group("/api/v1")
 

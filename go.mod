@@ -1,4 +1,4 @@
-module github.com/zuu-development/fullstack-examination-2024
+module github.com/fardinabir/todo-manager-app
 
 go 1.19
 

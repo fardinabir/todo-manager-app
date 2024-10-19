@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/fardinabir/todo-manager-app/internal/model"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -15,4 +16,15 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 		return err
 	}
 	return nil
+}
+
+// NewCustomValidator return a custom validator struct registering custom validator functions
+func NewCustomValidator() *CustomValidator {
+	v := validator.New()
+
+	// Register the custom validation for Priority
+	_ = v.RegisterValidation("validPriority", model.IsValidPriority)
+	_ = v.RegisterValidation("validStatus", model.IsValidStatus)
+
+	return &CustomValidator{validator: v}
 }

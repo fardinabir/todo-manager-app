@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/fardinabir/todo-manager-app/internal/db"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/zuu-development/fullstack-examination-2024/internal/db"
 )
 
 // migrateCmd represents the migrate command

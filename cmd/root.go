@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fardinabir/todo-manager-app/internal/model"
 	"github.com/go-playground/validator/v10"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 )
 
 var (
