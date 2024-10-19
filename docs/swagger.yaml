@@ -3,10 +3,11 @@ definitions:
   handler.CreateRequest:
     properties:
       priority:
-        type: integer
+        $ref: '#/definitions/model.Priority'
       task:
         type: string
     required:
+    - priority
     - task
     type: object
   handler.Error:
@@ -31,11 +32,23 @@ definitions:
     type: object
   handler.UpdateRequestBody:
     properties:
+      priority:
+        $ref: '#/definitions/model.Priority'
       status:
         $ref: '#/definitions/model.Status'
       task:
         type: string
     type: object
+  model.Priority:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - Low
+    - Medium
+    - High
   model.Status:
     enum:
     - created
@@ -53,7 +66,7 @@ definitions:
       id:
         type: integer
       priority:
-        type: integer
+        $ref: '#/definitions/model.Priority'
       status:
         $ref: '#/definitions/model.Status'
       task:
