@@ -1,111 +1,38 @@
-# Fullstack examination 2024
+# ToDo Manager Application
 
-## What is Fullstack examination 2024?
+This project is an extension of the [**Fullstack Examination 2024**](https://github.com/zuu-development/fullstack-examination-2024/tree/v0.0.2). The original project provided basic functionalities like adding, editing, viewing, and deleting todo tasks. The following changes were made to address the additional examination tasks:
 
-This is a repository for exams used to assess technical skills for hiring full-stack engineers (Golang).
+## 1. Task and Status-Based Filtering
+- Introduced filtering functionality based on task name and status.
+- Updated the UI to allow users to filter tasks dynamically.
+- Modified the `GET /api/v1/todos` endpoint to accept `task` and `status` query parameters.
+- Updated the Swagger API documentation to reflect these changes.
 
-## Dev
+## 2. Priority-Based Sorting of Tasks
+- Added a **priority** field to the `Todo` model (High, Medium, Low).
+- Implemented sorting functionality to prioritize tasks by priority field.
+- High-priority tasks are now sorted to the top, followed by medium and low-priority tasks.
+- Updated the UI to show tasks list sorted by priority.
+- Tests were written for the backend to ensure proper handling of priority.
 
-You will set up the development environment using asdf, a tool for managing multiple language versions.
-If you are in an environment where asdf cannot be used, please install the necessary tools according to your environment.
+## 3. Separation of Completed and Incomplete Tasks
+- Implemented two separate panels on the UI:
+    - **Pending Tasks**: For tasks with a status of `created`.
+    - **Completed Tasks**: For tasks with a status of `done`.
+- Tasks moved to `done` status are automatically transferred to the "Completed Tasks" panel.
+- Tasks marked as incomplete are transferred back to the "Pending Tasks" panel.
+- Modified the backend to handle task status updates and reflect them appropriately in the UI.
 
-### Install
+## 4. Backend API and Test Updates
+- Updated backend APIs to handle task filtering and sorting by priority.
+- Implemented **payload validations** to ensure that task names, statuses, and priorities are correctly validated.
+- Added tests to cover the validation of new sorting, filtering, and task status functionalities.
 
-#### Install asdf
+## 5. Documentation Updates
+- Updated the Swagger documentation to reflect changes in API endpoints, including the new task filtering and priority-based sorting functionalities.
+- Added detailed descriptions for new parameters and updated the API documentation to be in sync with the changes made.
 
-[Getting Started | asdf](https://asdf-vm.com/guide/getting-started.html)
-
-#### Install asdf plugins
-
-```bash
-asdf plugin add air
-asdf plugin add golang
-asdf plugin add golangci-lint
-asdf plugin add gotestsum
-asdf plugin add nodejs
-asdf plugin add swag
-```
-
-#### Install asdf versions
-
-Please install the versions listed in the `.tool-versions` file.
-
-```bash
-asdf install
-```
-
-### Start Development Environment
-
-#### backend
-
-```bash
-make dep-backend-local
-```
-
-```bash
-make migrate
-```
-
-```bash
-make serve-backend
-```
-
-#### ui
-
-```bash
-make dep-ui-local
-```
-
-```bash
-make serve-ui
-```
-
-When you access [http://localhost:3000/](http://localhost:3000/), the UI screen will be displayed.
-
-### Migration
-
-Please run the migration process.
-
-```bash
-make migrate
-```
-
-If the migration fails due to the current state of the schema, please delete the database and run the migration again.
-
-```bash
-make reset-local-db migrate
-```
-
-### Format
-
-To maintain consistency in the code, formatting should be applied. Be sure to run it once development is complete.
-
-```bash
-make fmt
-```
-
-### Swagger
-
-Please create API documentation using Swagger.
-
-```bash
-make swagger
-```
-
-To generate documentation, you need to add comments to your Go files. Please refer to this documentation for the correct syntax and guidelines.
-
-[swaggo/swag: Automatically generate RESTful API documentation with Swagger 2.0 for Go.](https://github.com/swaggo/swag#declarative-comments-format)
-
-While running `make serve-backend`, you can access [http://localhost:1314/](http://localhost:1314/) to view the Swagger UI. Or alternatively, you can open `docs/swagger.yaml` to view the API documentation.
-
-### Test
-
-Please run the tests.
-
-```bash
-make test-backend
-```
-
-## examination
-
-Please solve the tasks outlined in [examination.md](./examination.md).
+## Accessing the Application
+Once both the backend and frontend servers are running, you can access the application's UI by navigating to the following URL in your web browser: 
+[http://localhost:3000](http://localhost:3000). To view the API documentation using Swagger, ensure the backend server is running. Open the following URL in your web browser to access the Swagger UI: [http://localhost:1314/swagger/index.html](http://localhost:1314/swagger/index.html).
+For setup and development related instructions please refer to the [original README](./README_OLD.md).
