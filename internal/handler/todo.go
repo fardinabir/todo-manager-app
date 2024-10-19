@@ -30,8 +30,8 @@ func NewTodo(s service.Todo) TodoHandler {
 
 // CreateRequest is the request parameter for creating a new todo
 type CreateRequest struct {
-	Task     string `json:"task" validate:"required"`
-	Priority int    `json:"priority"`
+	Task     string         `json:"task" validate:"required"`
+	Priority model.Priority `json:"priority"`
 }
 
 // @Summary	Create a new todo
@@ -67,9 +67,9 @@ type UpdateRequest struct {
 
 // UpdateRequestBody is the request body for updating a todo
 type UpdateRequestBody struct {
-	Task     string       `json:"task,omitempty"`
-	Status   model.Status `json:"status,omitempty"`
-	Priority int          `json:"priority,omitempty"`
+	Task     string         `json:"task,omitempty"`
+	Status   model.Status   `json:"status,omitempty"`
+	Priority model.Priority `json:"priority,omitempty"`
 }
 
 // UpdateRequestPath is the request parameter for updating a todo
@@ -94,7 +94,7 @@ func (t *todoHandler) Update(c echo.Context) error {
 			ResponseError{Errors: []Error{{Code: errors.CodeBadRequest, Message: err.Error()}}})
 	}
 
-	todo, err := t.service.Update(req.ID, req.Priority, req.Task, req.Status)
+	todo, err := t.service.Update(req.ID, req.Task, req.Priority, req.Status)
 	if err != nil {
 		if err == model.ErrNotFound {
 			return c.JSON(http.StatusNotFound,

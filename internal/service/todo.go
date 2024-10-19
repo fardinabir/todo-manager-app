@@ -10,8 +10,8 @@ import (
 
 // Todo is the service for the todo endpoint.
 type Todo interface {
-	Create(task string, priority int) (*model.Todo, error)
-	Update(id, priority int, task string, status model.Status) (*model.Todo, error)
+	Create(task string, priority model.Priority) (*model.Todo, error)
+	Update(id int, task string, priority model.Priority, status model.Status) (*model.Todo, error)
 	Delete(id int) error
 	Find(id int) (*model.Todo, error)
 	FindAll(qry url.Values) ([]*model.Todo, error)
@@ -26,7 +26,7 @@ func NewTodo(r repository.Todo) Todo {
 	return &todo{r}
 }
 
-func (t *todo) Create(task string, priority int) (*model.Todo, error) {
+func (t *todo) Create(task string, priority model.Priority) (*model.Todo, error) {
 	todo := model.NewTodo(task, priority)
 	if err := t.todoRepository.Create(todo); err != nil {
 		return nil, err
@@ -34,8 +34,8 @@ func (t *todo) Create(task string, priority int) (*model.Todo, error) {
 	return todo, nil
 }
 
-func (t *todo) Update(id, priority int, task string, status model.Status) (*model.Todo, error) {
-	todo := model.NewUpdateTodo(id, priority, task, status)
+func (t *todo) Update(id int, task string, priority model.Priority, status model.Status) (*model.Todo, error) {
+	todo := model.NewUpdateTodo(id, task, priority, status)
 	// 現在の値を取得
 	currentTodo, err := t.Find(id)
 	if err != nil {

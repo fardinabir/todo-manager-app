@@ -7,13 +7,13 @@ type Todo struct {
 	ID        int `gorm:"primaryKey"`
 	Task      string
 	Status    Status
-	Priority  int
+	Priority  Priority
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }
 
 // NewTodo returns a new instance of the todo model.
-func NewTodo(task string, priority int) *Todo {
+func NewTodo(task string, priority Priority) *Todo {
 	return &Todo{
 		Task:     task,
 		Priority: priority,
@@ -22,7 +22,7 @@ func NewTodo(task string, priority int) *Todo {
 }
 
 // NewUpdateTodo returns a new instance of the todo model for updating.
-func NewUpdateTodo(id, priority int, task string, status Status) *Todo {
+func NewUpdateTodo(id int, task string, priority Priority, status Status) *Todo {
 	return &Todo{
 		ID:       id,
 		Task:     task,
@@ -49,3 +49,15 @@ var StatusMap = map[Status]bool{
 	Processing: true,
 	Done:       true,
 }
+
+// Priority is the priority of the task.
+type Priority int
+
+const (
+	// Low is the lowest priority of task
+	Low Priority = iota + 1
+	// Medium is the medium priority of task
+	Medium
+	// High is the highest priority of task
+	High
+)
