@@ -16,6 +16,7 @@ jobs:
             echo "evoked here"
             if [ -n "${CIRCLE_PULL_REQUEST}" ]; then
               gh pr comment "${CIRCLE_PULL_REQUEST}" --body "Golang test coverage"
+            fi
 
 workflows:
   version: 2
