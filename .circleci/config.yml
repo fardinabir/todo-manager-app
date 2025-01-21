@@ -1,0 +1,22 @@
+version: 2.1
+
+orbs:
+  gh: circleci/github-cli@2.6.2
+
+jobs:
+  back-end:
+    docker:
+      - image: cimg/go:1.21
+    steps:
+      - checkout
+      - gh/install
+      - run:
+          name: Output golang test coverage.
+          command:
+            gh pr comment "${CIRCLE_PULL_REQUEST}" --body "Golang test coverage"
+
+workflows:
+  version: 2
+  test-and-comment:
+    jobs:
+      - back-end
