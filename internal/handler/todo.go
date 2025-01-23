@@ -34,6 +34,8 @@ type CreateRequest struct {
 	Priority model.Priority `json:"priority" validate:"required,validPriority"`
 }
 
+// adding test comments
+
 // @Summary	Create a new todo
 // @Tags		todos
 // @Accept		json

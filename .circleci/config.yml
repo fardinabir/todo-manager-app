@@ -12,11 +12,15 @@ jobs:
       - gh/install
       - run:
           name: Output golang test coverage.
-          command:
-            gh pr comment "${CIRCLE_PULL_REQUEST}" --body "Golang test coverage"
+          command: |
+            echo "evoked here"
+            if [ -n "${CIRCLE_PULL_REQUEST}" ]; then
+              gh pr comment "${CIRCLE_PULL_REQUEST}" --body "Golang test coverage"
+            fi
 
 workflows:
   version: 2
   test-and-comment:
     jobs:
       - back-end
+

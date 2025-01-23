@@ -11,7 +11,7 @@ import (
 
 // cmpTransformJSON はcmp.DiffでJSON文字列([]byte)を比較のためのオプション
 //
-// この設定を入れることでJSON文字列の改行や空白を無視してくれる。
+// この設定を入れることでJSON文字列の改行や空白を無視してくれる。/ it will ignore newlines and whitespace in JSON strings.
 func cmpTransformJSON(t *testing.T) cmp.Option {
 	return cmp.FilterValues(
 		func(x, y []byte) bool {
