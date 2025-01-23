@@ -22,7 +22,5 @@ workflows:
   version: 2
   test-and-comment:
     jobs:
-      - back-end:
-          context:
-            - GITHUB_CREDS
+      - back-end
 
